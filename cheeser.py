@@ -556,17 +556,17 @@ def moreScreen():
     with open('Cheeser/diagnostics.txt', 'r') as reader:
         diags = reader.read().splitlines()
     
-    hours = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
-    hours.insert(INSERT, "Total Machine Hours.........." + str(int(int(diags[0])/60)))
+    hours = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
+    hours.insert(INSERT, "Total Machine Hours.........." + str(int(int(diags[1])/60)))
     hours.place(x=460,y=170)
-    cheesed = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
-    cheesed.insert(INSERT, "Total Pizzas Cheesed.........." + diags[1])
+    cheesed = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
+    cheesed.insert(INSERT, "Total Pizzas Cheesed.........." + diags[2])
     cheesed.place(x=460,y=220)
-    time = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
-    time.insert(INSERT, "Average Pizza Time..........." + diags[2])
+    time = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
+    time.insert(INSERT, "Average Pizza Time..........." + diags[3])
     time.place(x=460,y=270)
-    health = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
-    health.insert(INSERT, "Machine Health..........." + diags[3])
+    health = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
+    health.insert(INSERT, "Machine Health..........." + diags[4])
     health.place(x=460,y=320)
     
     # Calibration
@@ -654,7 +654,7 @@ logo = Label(screen, image = img, bg=main_bg)
 logo.place(x=40, y=255)
 
 # Function button
-stopButton  = Button(screen, text = "STOP", font = stopFont, bg = button_color, fg = main_fg, command = emergencyStop, height = 1, width = 9)
+stopButton  = Button(screen, text = "STOP", font = stopFont, bg = "red2", fg = "white", command = emergencyStop, height = 1, width = 9)
 stopButton.place(x=220, y=235)
 
 moreButton  = Button(screen, text = "...", font = stopFont, bg = button_color, fg = main_fg, command = moreScreen, height = 1, width = 3)
@@ -666,11 +666,10 @@ cleanButton.place(x=15, y=380)
 primeButton  = Button(screen, text = "PRIME", font = otherFont, bg = button_color, fg = main_fg, command = prime, height = 2, width = 10)
 primeButton.place(x=575, y=380)
 
-light  = Button(screen, text = "LESS\nCHEESE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 5)
+light  = Button(screen, text = "LESS\nCHEESE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 6)
 light.place(x=260, y=380)
 
-extra  = Button(screen, text = "EXTRA\nCHEESE", font = otherFont, activebackground = "DarkOrange2", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(ext), height = 2, width = 5)
+extra  = Button(screen, text = "EXTRA\nCHEESE", font = otherFont, activebackground = "DarkOrange2", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(ext), height = 2, width = 6)
 extra.place(x=420, y=380)
 
 mainloop()
-
