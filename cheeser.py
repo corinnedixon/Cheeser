@@ -145,7 +145,7 @@ def emergencyStop():
 
 #Function for running cheeser
 def runCheeser():
-    print("SPEED: " + str(amount*speed[size]))
+    print("SPEED: " + str(amount*calibration[size]))
     print("SIZE: " + str(size))
     print("RUNNING CHEESE\n")
     
@@ -196,10 +196,10 @@ def cheeseProgram(size):
     global amount
 
     # Create new threads
-    pump1 = threading.Thread(target=pumpFunc, args = (S1_STEP, amount*speed[size],))
-    pump2 = threading.Thread(target=pumpFunc, args = (S2_STEP, amount*speed[size],))
-    pump3 = threading.Thread(target=pumpFunc, args = (S3_STEP, amount*speed[size],))
-    pump4 = threading.Thread(target=pumpFunc, args = (S4_STEP, amount*speed[size],))
+    pump1 = threading.Thread(target=pumpFunc, args = (S1_STEP, amount*calibration[size],))
+    pump2 = threading.Thread(target=pumpFunc, args = (S2_STEP, amount*calibration[size],))
+    pump3 = threading.Thread(target=pumpFunc, args = (S3_STEP, amount*calibration[size],))
+    pump4 = threading.Thread(target=pumpFunc, args = (S4_STEP, amount*calibration[size],))
     
     # Start new thread
     pump1.start()
@@ -360,14 +360,34 @@ def setAmount(amt):
 
 # Functions for adding and subtracting from cheeser pump speed during calibration
 def add(size, speedVar):
-    if(speed[size] < 100):
-        speed[size] = speed[size] + 5
-        speedVar.set(speed[size])
+    if(calibration[size] < 100):
+        calibration[size] = calibration[size] + 5
+        speedVar.set(calibration[size])
+        updateCalibrationFile()
 
 def subtract(size, speedVar):
-    if(speed[size] > 0):
-        speed[size] = speed[size] - 5
-        speedVar.set(speed[size])
+    if(calibration[size] > 0):
+        calibration[size] = calibration[size] - 5
+        speedVar.set(calibration[size])
+        updateCalibrationFile()
+
+# Function for saving current calibrations
+def updateCalibrationFile():
+    # Get current data
+    with open('Cheeser/diagnostics.txt', 'r') as reader:
+        calibs = reader.read().splitlines()
+        
+    # Update data
+    global calibration
+    calibs[7] = str(calibration[7])
+    calibs[8] = str(calibration[10])
+    calibs[9] = str(calibration[12])
+    calibs[10] = str(calibration[14])
+    
+    # Set data in file
+    with open('Cheeser/diagnostics.txt', 'w') as writer:
+        for data in calibs:
+            writer.write("%s\n" % data)
 
 # Function for updating diagnostics
 def updateDiagnostics(pizzaTime):
