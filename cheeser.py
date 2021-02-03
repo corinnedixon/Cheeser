@@ -544,7 +544,7 @@ def moreScreen():
     home.place(x=575, y=380)
     
     #TEMPORARY QUIT
-    quitButton  = Button(other, text = "QUIT", font = otherFont, bg = button_color, fg = main_fg, command = screen.destroy, height = 2, width = 10)
+    quitButton  = Button(other, text = "QUIT", font = diagFont, bg = button_color, fg = main_fg, command = screen.destroy, height = 2, width = 4)
     quitButton.place(x=300, y=10)
     
     # Machine diagnostics
@@ -570,7 +570,7 @@ def moreScreen():
     health.place(x=460,y=320)
     
     # Calibration
-    calib = Text(other, font = headingFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=27)
+    calib = Text(other, font = headingFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=28)
     calib.insert(INSERT, "CHEESE WEIGHT CALIBRATION")
     calib.place(x=10,y=10)
     
