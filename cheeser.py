@@ -50,7 +50,7 @@ hasInternet = False
 # Color variables for consistency
 main_bg = "#FFFFFF" #switched from gray20
 button_color = "#CCCDD0" #switched from gray20
-donatos_path = "Saucer/donatos.png" #switched from white
+donatos_path = "Cheeser/donatos.png" #switched from white
 main_fg = "#000000" #switched from FFFFFF
 
 # Light, normal, extra sauce speeds
@@ -59,7 +59,7 @@ med = 1
 ext = 1.25
 
 # Size calibrations from file
-with open('Saucer/diagnostics.txt', 'r') as reader:
+with open('Cheeser/diagnostics.txt', 'r') as reader:
         calibs = reader.read().splitlines()
 
 global calibration
@@ -143,7 +143,7 @@ def emergencyStop():
 
 #CHECK FUNCTIONALITY HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#Function for running saucer
+#Function for running cheeser
 def runCheeser():
     print("SPEED: " + str(amount*speed[size]))
     print("SIZE: " + str(size))
@@ -151,7 +151,7 @@ def runCheeser():
     
     pizzaTime = time.time()
     
-    # Run corresponding saucer pumps
+    # Run corresponding cheeser pumps
     cheeseProgram(size)
     spinFunc(25, cheese_spin_steps)
     stopCheesing()
@@ -191,7 +191,7 @@ def stopSpinning():
   spinning = False
   GPIO.output(T6_STEP, GPIO.LOW)
 
-#Functions for starting and stopping sauce
+#Functions for starting and stopping cheese
 def cheeseProgram(size):
     global amount
 
@@ -326,10 +326,10 @@ def setSpeeds(sz, amt):
         
     # Assign speeds to each motor (corresponding speed x calibration percent x extra/normal/less)
     global s1_speed, s2_speed, s3_speed, s4_speed
-    s1_speed = int(motor1speeds[sz]*cal*amt) # Sauce stepper motor 1 speed
-    s2_speed = int(motor2speeds[sz]*cal*amt) # Sauce stepper motor 2 speed
-    s3_speed = int(motor3speeds[sz]*cal*amt) # Sauce stepper motor 3 speed
-    s4_speed = int(motor4speeds[sz]*cal*amt) # Sauce stepper motor 4 speed
+    s1_speed = int(motor1speeds[sz]*cal*amt) # Cheese stepper motor 1 speed
+    s2_speed = int(motor2speeds[sz]*cal*amt) # Cheese stepper motor 2 speed
+    s3_speed = int(motor3speeds[sz]*cal*amt) # Cheese stepper motor 3 speed
+    s4_speed = int(motor4speeds[sz]*cal*amt) # Cheese stepper motor 4 speed
 
 # Functions for setting pump amount as percentage of speeds and colors of buttons
 def setColor(color):
@@ -358,7 +358,7 @@ def setAmount(amt):
 
 #********************************CALIBRATION / DIAGNOSTICS**********************************
 
-# Functions for adding and subtracting from saucer pump speed during calibration
+# Functions for adding and subtracting from cheeser pump speed during calibration
 def add(size, speedVar):
     if(speed[size] < 100):
         speed[size] = speed[size] + 5
@@ -559,9 +559,9 @@ def moreScreen():
     hours = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
     hours.insert(INSERT, "Total Machine Hours.........." + str(int(int(diags[0])/60)))
     hours.place(x=460,y=170)
-    sauced = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
-    sauced.insert(INSERT, "Total Pizzas Cheesed.........." + diags[1])
-    sauced.place(x=460,y=220)
+    cheesed = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
+    cheesed.insert(INSERT, "Total Pizzas Cheesed.........." + diags[1])
+    cheesed.place(x=460,y=220)
     time = Text(other, font = diagFont, bd = -2, bg = "gray20", fg = "white", height=1, width=37)
     time.insert(INSERT, "Average Pizza Time..........." + diags[2])
     time.place(x=460,y=270)
@@ -654,7 +654,7 @@ logo = Label(screen, image = img, bg=main_bg)
 logo.place(x=40, y=255)
 
 # Function button
-stopButton  = Button(screen, text = "STOP", font = stopFont, bg = button_color, fg = main_fg, command = stopPumping, height = 1, width = 9)
+stopButton  = Button(screen, text = "STOP", font = stopFont, bg = button_color, fg = main_fg, command = emergencyStop, height = 1, width = 9)
 stopButton.place(x=220, y=235)
 
 moreButton  = Button(screen, text = "...", font = stopFont, bg = button_color, fg = main_fg, command = moreScreen, height = 1, width = 3)
@@ -666,10 +666,10 @@ cleanButton.place(x=15, y=380)
 primeButton  = Button(screen, text = "PRIME", font = otherFont, bg = button_color, fg = main_fg, command = prime, height = 2, width = 10)
 primeButton.place(x=575, y=380)
 
-light  = Button(screen, text = "LESS\nSAUCE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 5)
+light  = Button(screen, text = "LESS\nCHEESE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 5)
 light.place(x=260, y=380)
 
-extra  = Button(screen, text = "EXTRA\nSAUCE", font = otherFont, activebackground = "DarkOrange2", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(ext), height = 2, width = 5)
+extra  = Button(screen, text = "EXTRA\nCHEESE", font = otherFont, activebackground = "DarkOrange2", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(ext), height = 2, width = 5)
 extra.place(x=420, y=380)
 
 mainloop()
