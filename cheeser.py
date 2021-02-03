@@ -548,7 +548,7 @@ def moreScreen():
     quitButton.place(x=300, y=10)
     
     # Machine diagnostics
-    diag = Text(other, font = headingFont, bd = -2, bg = button_color, fg = main_fg, height=1, width=21)
+    diag = Text(other, font = headingFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=21)
     diag.insert(INSERT, "MACHINE DIAGNOSTICS")
     diag.place(x=460,y=125)
     
@@ -588,19 +588,19 @@ def moreScreen():
     text7.place(x=10,y=350)
     
     speed14Var = DoubleVar()
-    speed14Var.set(speed[14])
+    speed14Var.set(calibration[14])
     speed14 = Label(other, font=calibFont, textvariable=speed14Var, bg = button_color, fg = main_fg, bd = -2, height=1, width=7)
     speed14.place(x=160,y=82)
     speed12Var = DoubleVar()
-    speed12Var.set(speed[12])
+    speed12Var.set(calibration[12])
     speed12 = Label(other, font=calibFont, textvariable=speed12Var, bg = button_color, fg = main_fg, bd = -2, height=1, width=7)
     speed12.place(x=160,y=172)
     speed10Var = DoubleVar()
-    speed10Var.set(speed[10])
+    speed10Var.set(calibration[10])
     speed10 = Label(other, font=calibFont, textvariable=speed10Var, bg = button_color, fg = main_fg, bd = -2, height=1, width=7)
     speed10.place(x=160,y=262)
     speed7Var = DoubleVar()
-    speed7Var.set(speed[7])
+    speed7Var.set(calibration[7])
     speed7 = Label(other, font=calibFont, textvariable=speed7Var, bg = button_color, fg = main_fg, bd = -2, height=1, width=7)
     speed7.place(x=160,y=352)
     
@@ -667,9 +667,9 @@ primeButton  = Button(screen, text = "PRIME", font = otherFont, bg = button_colo
 primeButton.place(x=575, y=380)
 
 light  = Button(screen, text = "LESS\nCHEESE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 6)
-light.place(x=260, y=380)
+light.place(x=245, y=380)
 
 extra  = Button(screen, text = "EXTRA\nCHEESE", font = otherFont, activebackground = "DarkOrange2", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(ext), height = 2, width = 6)
-extra.place(x=420, y=380)
+extra.place(x=405, y=380)
 
 mainloop()
