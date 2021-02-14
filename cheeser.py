@@ -53,10 +53,16 @@ button_color = "#CCCDD0" #switched from gray20
 donatos_path = "Cheeser/donatos.png" #switched from white
 main_fg = "#000000" #switched from FFFFFF
 
-# Light, normal, extra sauce speeds
+# Light, normal, extra cheese speeds
 lt = 0.75
 med = 1
 ext = 1.25
+
+# Time variables for each size
+time7 = 5
+time10 = 5
+time12 = 5
+time14 = 5
 
 # Size calibrations from file
 with open('Cheeser/diagnostics.txt', 'r') as reader:
@@ -66,21 +72,19 @@ global calibration
 calibration = {7: int(calibs[7]), 10: int(calibs[8]), 12: int(calibs[9]), 14: int(calibs[10])}
 
 # Motor speed
-global s1_speed, s2_speed, s3_speed, s4_speed
-global motor1speeds, motor2speeds, motor3speeds, motor4speeds
+global s1_speed, s2_speed, s3_speed, dc_speed
+global motor1_mvals, motor1_bvals, motor2_mvals, motor2_bvals, motor3speeds, dcmotorspeed
 
-motor1speeds = {7:3500, 10:3500, 12:3500, 14:3600} # Sauce motor 1 speed
-motor2speeds = {7:0, 10:3200, 12:3200, 14:2500} # Sauce motor 2 speed
-motor3speeds = {7:0, 10:0, 12:1700, 14:1700} # Sauce motor 3 speed
-motor4speeds = {7:0, 10:0, 12:0, 14:1700} # Sauce motor 4 speed
+motor1_bvals = {7:3500, 10:3500, 12:3500, 14:3600} # Cheese motor 1 initial speed
+motor1_mvals = {7:3500, 10:3500, 12:3500, 14:3600} # Cheese motor 1 slope
+motor2_bvals = {7:0, 10:3200, 12:3200, 14:2500} # Cheese motor 2 initial speed
+motor2_mvals = {7:0, 10:3200, 12:3200, 14:2500} # Cheese motor 2 slope
+motor3speeds = {7:40, 10:50, 12:60, 14:70} # Cheese motor 3 speed
+dcmotorspeed = 50 # DC motor constant speed
 
-clean_prime_speed = 2000 # Sauce motor speed when cleaning and priming
+clean_prime_speed = 2000 # Cheese motor speed when cleaning and priming
 
-# Size / Steps / Sauce Amount
-global size
-size = -1 # No default size
-global cheese_spin_steps
-sauce_spin_steps = 1000
+# Cheese Amount
 global amount
 amount = med # default amount at start is medium
 
@@ -96,17 +100,13 @@ running = False
 
 #***************************************MOTOR SET UP****************************************
 
-#FIX THIS LATER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-# Sauce stepper motor set up (pumps)
+# Cheese stepper motor set up
 S1_DIR = 36   # Direction GPIO Pin
 S1_STEP = 38  # Step GPIO Pin
 S2_DIR = 31   # Direction GPIO Pin
 S2_STEP = 33  # Step GPIO Pin
 S3_DIR = 29   # Direction GPIO Pin
 S3_STEP = 32  # Step GPIO Pin
-S4_DIR = 21   # Direction GPIO Pin
-S4_STEP = 23  # Step GPIO Pin
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
@@ -116,46 +116,80 @@ GPIO.setup(S2_DIR, GPIO.OUT)
 GPIO.setup(S2_STEP, GPIO.OUT)
 GPIO.setup(S3_DIR, GPIO.OUT)
 GPIO.setup(S3_STEP, GPIO.OUT)
-GPIO.setup(S4_DIR, GPIO.OUT)
-GPIO.setup(S4_STEP, GPIO.OUT)
 
-# Big stepper motor set up (spins)
-T6_DIR = 13   # Direction GPIO Pin
-T6_STEP = 15  # Step GPIO Pin
+# DC Motor set up
+rpwm = 5
 
-GPIO.setup(T6_DIR, GPIO.OUT)
-GPIO.setup(T6_STEP, GPIO.OUT)
+GPIO.setup(rpwm,GPIO.OUT)
+GPIO.output(rpwm, GPIO.LOW)
 
-#*************************************BUTTON FUNCTIONS**************************************
+global dc
+dc = GPIO.PWM(rpwm, 50)
 
-# Function used for size double click
-def setSize(button, new_size):
-    global size
-    size = new_size
-    runCheeser(button)
+#**********************************PIZZA SIZE FUNCTIONS**************************************
 
-# Function for stop button
-def emergencyStop():
-    global shutdown
-    shutdown = True
+# 7 inch function
+def sevenProgram():
+  global running
+  if(running == False):
+    print("7")
+    seven = threading.Thread(target=runCheeser, args=(7, time7))
+    seven.start()
+
+# 10 inch function
+def tenProgram():
+  global running
+  if(running == False):
+    print("10")
+    ten = threading.Thread(target=runCheeser, args=(10, time10))
+    ten.start()
+
+# 12 inch function
+def twelveProgram():
+  global running
+  if(running == False):
+    print("12")
+    twelve = threading.Thread(target=runCheeser, args=(12, time12))
+    twelve.start()
+
+# 14 inch function
+def fourteenProgram():
+  global running
+  if(running == False):
+    print("14")
+    fourteen = threading.Thread(target=runCheeser, args=(14, time14))
+    fourteen.start()
 
 #************************************CHEESER FUNCTIONS***************************************
 
-#CHECK FUNCTIONALITY HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Auger (1 stepper) moves constant the entire time
+# Shaker (1 DC) runs constant the entire time
+# Vertical and spin movement (2 steppers) use y=mx+b, like pepp
+# Spin and move func with vars -> turn on auger and shaker -> stop auger and shaker once spin / move stop
 
 #Function for running cheeser
-def runCheeser():
+def runCheeser(size, cheese_time):
+    global running
+    running = True
+    
     print("SPEED: " + str(amount*calibration[size]))
     print("SIZE: " + str(size))
     print("RUNNING CHEESE\n")
     
     pizzaTime = time.time()
     
-    # Run corresponding cheeser pumps
-    cheeseProgram(size)
-    spinFunc(25, cheese_spin_steps)
+    # Run cheeser programs for given time
+    spinProgram(motor2_mvals[size], motor2_bvals[size])
+    cheeseProgram(motor3speeds[size])
+    dc.start(dcmotorspeed)
+    moveProgram(motor1_bvals[size], motor2_mvals[size])
+    time.sleep(cheese_time)
+    stopMoving()
     stopCheesing()
     stopSpinning()
+    dc.stop()
+    
+    # some sort of return to start function ?
     
     # Set amount to default
     setAmount(med)
@@ -164,53 +198,79 @@ def runCheeser():
     pizzaTime = time.time() - pizzaTime
     updateDiagnostics(pizzaTime)
 
-#Functions for starting and stopping spin
-def spinProgram(speed):
+# Functions for moving across
+def moveProgram(m, b):
+    global moving
+    moving = True
+    
+    # Set direction of move
+    GPIO.output(S1_DIR, GPIO.HIGH)
+    
     # Create new thread
-    spin = threading.Thread(target=spinFunc, args=(speed,1,))
+    move = threading.Thread(target=movefunc, args=(m,b))
+    # Start new thread
+    move.start()
+    
+def moveFunc(m,b):
+  global startTime, moving
+  startTime = time.time()
+  while moving:
+    if moving == False:
+      break
+    else:
+      delay = m*(time.time()-startTime)+b
+      GPIO.output(S1_STEP, GPIO.HIGH)
+      time.sleep(delay)
+      GPIO.output(S1_STEP, GPIO.LOW)
+      time.sleep(delay)
+
+def stopMoving():
+    global moving
+    moving = False
+    GPIO.output(S1_STEP, GPIO.LOW)
+
+# Functions for starting and stopping spin
+def spinProgram(m,b):
+    global spinning
+    spinning = True
+    
+    # Set direction of spin
+    GPIO.output(S2_DIR, GPIO.HIGH)
+
+    # Create new thread
+    spin = threading.Thread(target=spinFunc, args=(m,b))
     # Start new thread
     spin.start()
 
-def spinFunc(speed, steps):
-  global spinning  #create global
-  spinning = True
-  
-  spin_delay = (100-speed)/50000
-  while spinning and steps > 0:
+def spinFunc(m,b):
+  global startTime, spinning
+  startTime = time.time()
+  while spinning:
     if spinning == False:
       break
     else:
-      GPIO.output(T6_STEP, GPIO.HIGH)
-      time.sleep(spin_delay)
-      GPIO.output(T6_STEP, GPIO.LOW)
-      time.sleep(spin_delay)
-      steps = steps - 1
+      delay = m*(time.time()-startTime)+b
+      GPIO.output(S2_STEP, GPIO.HIGH)
+      time.sleep(delay)
+      GPIO.output(S2_STEP, GPIO.LOW)
+      time.sleep(delay)
 
 def stopSpinning():
   global spinning
   spinning = False
-  GPIO.output(T6_STEP, GPIO.LOW)
+  GPIO.output(S2_STEP, GPIO.LOW)
 
-#Functions for starting and stopping cheese
-def cheeseProgram(size):
+# Functions for starting and stopping cheese
+def cheeseProgram(speed):
     global amount
 
     # Create new threads
-    pump1 = threading.Thread(target=pumpFunc, args = (S1_STEP, amount*calibration[size],))
-    pump2 = threading.Thread(target=pumpFunc, args = (S2_STEP, amount*calibration[size],))
-    pump3 = threading.Thread(target=pumpFunc, args = (S3_STEP, amount*calibration[size],))
-    pump4 = threading.Thread(target=pumpFunc, args = (S4_STEP, amount*calibration[size],))
-    
+    motor = threading.Thread(target=cheeseFunc, args = (speed))
+  
     # Start new thread
-    pump1.start()
-    if size >= 10:
-        pump2.start()
-    if size >= 12:
-        pump3.start()
-    if size >= 14:
-        pump4.start()
+    motor.start()
     
-def cheeseFunc(motor_pin, speed):
+def cheeseFunc(speed):
   global cheesing  #create global
   cheesing = True
     
@@ -218,18 +278,25 @@ def cheeseFunc(motor_pin, speed):
     if cheesing == False:
       break
     else:
-      delay = (126-speed)/40000
-      GPIO.output(motor_pin, GPIO.HIGH)
+      delay = (101-speed)/40000
+      GPIO.output(S3_STEP, GPIO.HIGH)
       time.sleep(delay)
-      GPIO.output(motor_pin, GPIO.LOW)
+      GPIO.output(S3_STEP, GPIO.LOW)
       time.sleep(delay)
 
 def stopCheesing():
   global cheesing
   cheesing = False
+  GPIO.output(S3_STEP, GPIO.LOW)
+  
+# Function that stops everything
+def stopAll():
+    stopCheesing()
+    stopSpinning()
+    stopMoving()
 
 #**************************************CLEAN AND PRIME**************************************
-   
+
 # Function to clean
 def clean(button):
     # Set shutdown variable to false since we are running
@@ -254,18 +321,14 @@ def cleanProgram(button):
     global shutdown, clean_prime_speed
     cleanTime = time.time()
 
-    # Pump for 2 minutes
-    pump1 = threading.Thread(target=pumpFunc, args = (S1_STEP, clean_prime_speed))
-    pump2 = threading.Thread(target=pumpFunc, args = (S2_STEP, clean_prime_speed))
-    pump3 = threading.Thread(target=pumpFunc, args = (S3_STEP, clean_prime_speed))
-    pump4 = threading.Thread(target=pumpFunc, args = (S4_STEP, clean_prime_speed))
+    # Auger thread
+    auger = threading.Thread(target=cheeseProgram, args = (clean_prime_speed))
     
     # Start new thread
-    pump1.start()
-    pump2.start()
-    pump3.start()
-    pump4.start()
+    auger.start()
+    dc.start(dcmotorspeed)
         
+    # Run for 2 minutes
     while((not shutdown) and (time.time()-cleanTime < 120)):
         button['text'] = int(120-(time.time()-cleanTime))
     
@@ -298,18 +361,14 @@ def primeProgram(button):
     global shutdown, clean_prime_speed
     primeTime = time.time()
 
-    # Pump for 30 seconds
-    pump1 = threading.Thread(target=pumpFunc, args = (S1_STEP, clean_prime_speed))
-    pump2 = threading.Thread(target=pumpFunc, args = (S2_STEP, clean_prime_speed))
-    pump3 = threading.Thread(target=pumpFunc, args = (S3_STEP, clean_prime_speed))
-    pump4 = threading.Thread(target=pumpFunc, args = (S4_STEP, clean_prime_speed))
+    # Auger thread
+    auger = threading.Thread(target=cheeseProgram, args = (clean_prime_speed))
     
     # Start new thread
-    pump1.start()
-    pump2.start()
-    pump3.start()
-    pump4.start()
-    
+    auger.start()
+    dc.start(dcmotorspeed)
+  
+    # Run for 30 seconds
     while((not shutdown) and (time.time()-primeTime < 30)):
         button['text'] = int(30-(time.time()-primeTime))
     
@@ -323,13 +382,14 @@ def primeProgram(button):
 def setSpeeds(sz, amt):
     # Calculate calibration constant
     cal = math.sqrt((150 - calibration[sz])/100)
-        
+    
+    # change slopes or initial speed when calibrating????
     # Assign speeds to each motor (corresponding speed x calibration percent x extra/normal/less)
-    global s1_speed, s2_speed, s3_speed, s4_speed
-    s1_speed = int(motor1speeds[sz]*cal*amt) # Cheese stepper motor 1 speed
-    s2_speed = int(motor2speeds[sz]*cal*amt) # Cheese stepper motor 2 speed
+    global s1_speed, s2_speed, s3_speed, dc_speed
+    s1_speed = int(motor1_mvals[sz]*cal*amt) # Cheese stepper motor 1 speed
+    s2_speed = int(motor2_mvals[sz]*cal*amt) # Cheese stepper motor 2 speed
     s3_speed = int(motor3speeds[sz]*cal*amt) # Cheese stepper motor 3 speed
-    s4_speed = int(motor4speeds[sz]*cal*amt) # Cheese stepper motor 4 speed
+    dc_speed = int(dcmotorspeed*cal*amt) # Cheese dc motor speed
 
 # Functions for setting pump amount as percentage of speeds and colors of buttons
 def setColor(color):
@@ -537,8 +597,6 @@ def sos():
 
 #***********************************OTHER SCREEN SET UP*************************************
 
-#STOPPED HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 # Function setting up ... screen with various helpful features
 def moreScreen():
     global speed
@@ -580,7 +638,7 @@ def moreScreen():
     hours.insert(INSERT, "Total Machine Hours.........." + str(int(int(diags[1])/60)))
     hours.place(x=460,y=170)
     cheesed = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
-    cheesed.insert(INSERT, "Total Pizzas Cheesed.........." + diags[2])
+    cheesed.insert(INSERT, "Total Pizzas Cheesed........." + diags[2])
     cheesed.place(x=460,y=220)
     time = Text(other, font = diagFont, bd = -2, bg = main_bg, fg = main_fg, height=1, width=37)
     time.insert(INSERT, "Average Pizza Time..........." + diags[3])
@@ -656,16 +714,16 @@ stopFont = font.Font(family='Helvetica', size=50, weight='bold')
 otherFont = font.Font(family='Helvetica', size=24, weight='normal')
 
 # Size buttons
-fourteenButton  = Button(screen, text = "14\"", font = sizeFont, bg = "lime green", fg = "white", command = lambda: setSize(fourteenButton, 14), height = 2 , width = 3)
+fourteenButton  = Button(screen, text = "14\"", font = sizeFont, bg = "lime green", fg = "white", command = fourteenProgram, height = 2 , width = 3)
 fourteenButton.place(x=640, y=15)
 
-twelveButton  = Button(screen, text = "12\"", font = sizeFont, bg = "lime green", fg = "white", command = lambda: setSize(twelveButton, 12), height = 2 , width = 3)
+twelveButton  = Button(screen, text = "12\"", font = sizeFont, bg = "lime green", fg = "white", command = twelveProgram, height = 2 , width = 3)
 twelveButton.place(x=430, y=15)
 
-tenButton  = Button(screen, text = "10\"", font = sizeFont, bg = "lime green", fg = "white", command = lambda: setSize(tenButton, 10), height = 2 , width = 3)
+tenButton  = Button(screen, text = "10\"", font = sizeFont, bg = "lime green", fg = "white", command = tenProgram, height = 2 , width = 3)
 tenButton.place(x=222, y=15)
 
-sevenButton  = Button(screen, text = "7\"", font = sizeFont, bg = "lime green", fg = "white", command = lambda: setSize(sevenButton, 7), height = 2 , width = 3)
+sevenButton  = Button(screen, text = "7\"", font = sizeFont, bg = "lime green", fg = "white", command = sevenProgram, height = 2 , width = 3)
 sevenButton.place(x=15, y=15)
 
 # Donatos Image
@@ -674,7 +732,7 @@ logo = Label(screen, image = img, bg=main_bg)
 logo.place(x=40, y=255)
 
 # Function button
-stopButton  = Button(screen, text = "STOP", font = stopFont, bg = "red2", fg = "white", command = emergencyStop, height = 1, width = 9)
+stopButton  = Button(screen, text = "STOP", font = stopFont, bg = "red2", fg = "white", command = stopAll, height = 1, width = 9)
 stopButton.place(x=220, y=235)
 
 moreButton  = Button(screen, text = "...", font = stopFont, bg = button_color, fg = main_fg, command = moreScreen, height = 1, width = 3)
