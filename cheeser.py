@@ -207,7 +207,7 @@ def moveProgram(m, b):
     GPIO.output(S1_DIR, GPIO.HIGH)
     
     # Create new thread
-    move = threading.Thread(target=movefunc, args=(m,b))
+    move = threading.Thread(target=moveFunc, args=(m,b))
     # Start new thread
     move.start()
     
@@ -738,10 +738,10 @@ stopButton.place(x=220, y=235)
 moreButton  = Button(screen, text = "...", font = stopFont, bg = button_color, fg = main_fg, command = moreScreen, height = 1, width = 3)
 moreButton.place(x=640, y=235)
 
-cleanButton  = Button(screen, text = "CLEAN", font = otherFont, bg = button_color, fg = main_fg, command = clean, height = 2, width = 10)
+cleanButton  = Button(screen, text = "CLEAN", font = otherFont, bg = button_color, fg = main_fg, command = lambda: clean(cleanButton), height = 2, width = 10)
 cleanButton.place(x=15, y=380)
 
-primeButton  = Button(screen, text = "PRIME", font = otherFont, bg = button_color, fg = main_fg, command = prime, height = 2, width = 10)
+primeButton  = Button(screen, text = "PRIME", font = otherFont, bg = button_color, fg = main_fg, command = lambda: prime(primeButton), height = 2, width = 10)
 primeButton.place(x=575, y=380)
 
 light  = Button(screen, text = "LESS\nCHEESE", font = otherFont, activebackground = "orange", activeforeground = "white", bg = button_color, fg = main_fg, command = lambda: setAmount(lt), height = 2, width = 6)
