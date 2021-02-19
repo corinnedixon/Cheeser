@@ -210,6 +210,8 @@ def moveProgram(m, b):
     move = threading.Thread(target=moveFunc, args=[m,b])
     # Start new thread
     move.start()
+    while(moving): pass
+    move.join()
     
 def moveFunc(m,b):
   global startTime, moving
@@ -241,6 +243,8 @@ def spinProgram(m,b):
     spin = threading.Thread(target=spinFunc, args=[m,b])
     # Start new thread
     spin.start()
+    while(spinning): pass
+    spin.join()
 
 def spinFunc(m,b):
   global startTime, spinning
@@ -262,15 +266,18 @@ def stopSpinning():
 
 # Functions for starting and stopping cheese
 def cheeseProgram(speed):
+    global cheesing
+    cheesing = True
     # Create new threads
     motor = threading.Thread(target=cheeseFunc, args = [speed])
   
     # Start new thread
     motor.start()
+    while(cheesing): pass
+    motor.join()
     
 def cheeseFunc(speed):
   global cheesing  #create global
-  cheesing = True
     
   while cheesing:
     if cheesing == False:
