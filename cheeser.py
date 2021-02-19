@@ -192,7 +192,7 @@ def runCheeser(size, cheese_time):
     # some sort of return to start function ?
     
     # Set amount to default
-    setAmount(med)
+    #setAmount(med)
     
     # Update diagnostics
     pizzaTime = time.time() - pizzaTime
@@ -262,10 +262,8 @@ def stopSpinning():
 
 # Functions for starting and stopping cheese
 def cheeseProgram(speed):
-    global amount
-
     # Create new threads
-    motor = threading.Thread(target=cheeseFunc, args = (speed))
+    motor = threading.Thread(target=[cheeseFunc], args = (speed))
   
     # Start new thread
     motor.start()
