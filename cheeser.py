@@ -207,7 +207,7 @@ def moveProgram(m, b):
     GPIO.output(S1_DIR, GPIO.HIGH)
     
     # Create new thread
-    move = threading.Thread(target=moveFunc, args=(m,b))
+    move = threading.Thread(target=[moveFunc], args=(m,b))
     # Start new thread
     move.start()
     
@@ -238,7 +238,7 @@ def spinProgram(m,b):
     GPIO.output(S2_DIR, GPIO.HIGH)
 
     # Create new thread
-    spin = threading.Thread(target=spinFunc, args=(m,b))
+    spin = threading.Thread(target=[spinFunc], args=(m,b))
     # Start new thread
     spin.start()
 
@@ -455,12 +455,12 @@ def updateDiagnostics(pizzaTime):
         
     # Update data
     global totalTime
-    diags[0] = str(int(diags[0]) + int((time.time() - totalTime)/60))
-    diags[1] = str(int(diags[1]) + 1)
-    if(int(diags[2]) == 0):
-        diags[2] = str(int(pizzaTime))
+    diags[1] = str(int(diags[1]) + int((time.time() - totalTime)/60))
+    diags[2] = str(int(diags[2]) + 1)
+    if(int(diags[3]) == 0):
+        diags[3] = str(int(pizzaTime))
     else:
-        diags[2] = str(int((int(diags[2]) + pizzaTime)/2))
+        diags[3] = str(int((int(diags[3]) + pizzaTime)/2))
     
     # Set data in file
     with open('Cheeser/diagnostics.txt', 'w') as writer:
