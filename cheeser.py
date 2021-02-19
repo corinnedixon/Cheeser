@@ -133,7 +133,7 @@ def sevenProgram():
   global running
   if(running == False):
     print("7")
-    seven = threading.Thread(target=runCheeser, args=(7, time7))
+    seven = threading.Thread(target=runCheeser, args=[7, time7])
     seven.start()
 
 # 10 inch function
@@ -141,7 +141,7 @@ def tenProgram():
   global running
   if(running == False):
     print("10")
-    ten = threading.Thread(target=runCheeser, args=(10, time10))
+    ten = threading.Thread(target=runCheeser, args=[10, time10])
     ten.start()
 
 # 12 inch function
@@ -149,7 +149,7 @@ def twelveProgram():
   global running
   if(running == False):
     print("12")
-    twelve = threading.Thread(target=runCheeser, args=(12, time12))
+    twelve = threading.Thread(target=runCheeser, args=[12, time12])
     twelve.start()
 
 # 14 inch function
@@ -157,7 +157,7 @@ def fourteenProgram():
   global running
   if(running == False):
     print("14")
-    fourteen = threading.Thread(target=runCheeser, args=(14, time14))
+    fourteen = threading.Thread(target=runCheeser, args=[14, time14])
     fourteen.start()
 
 #************************************CHEESER FUNCTIONS***************************************
