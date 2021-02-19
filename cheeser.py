@@ -130,34 +130,38 @@ dc = GPIO.PWM(rpwm, 50)
 
 # 7 inch function
 def sevenProgram():
-  global running
+  global running, func_thread
   if(running == False):
     print("7")
     seven = threading.Thread(target=runCheeser, args=[7, time7])
+    func_thread = seven
     seven.start()
 
 # 10 inch function
 def tenProgram():
-  global running
+  global running, func_thread
   if(running == False):
     print("10")
     ten = threading.Thread(target=runCheeser, args=[10, time10])
+    func_thread = ten
     ten.start()
 
 # 12 inch function
 def twelveProgram():
-  global running
+  global running, func_thread
   if(running == False):
     print("12")
     twelve = threading.Thread(target=runCheeser, args=[12, time12])
+    func_thread = twelve
     twelve.start()
 
 # 14 inch function
 def fourteenProgram():
-  global running
+  global running, func_thread
   if(running == False):
     print("14")
     fourteen = threading.Thread(target=runCheeser, args=[14, time14])
+    func_thread = fourteen
     fourteen.start()
 
 #************************************CHEESER FUNCTIONS***************************************
@@ -288,7 +292,8 @@ def stopCheesing():
   
 # Function that stops everything
 def stopAll():
-    global running
+    global running, func_thread
+    if(func_thread): func_thread.join()
     running = False
     stopCheesing()
     stopSpinning()
