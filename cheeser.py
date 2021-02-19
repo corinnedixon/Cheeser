@@ -186,7 +186,7 @@ def runCheeser(size, cheese_time):
     moveProgram(motor1_bvals[size], motor2_mvals[size])
     time.sleep(cheese_time)
     stopAll()
-    
+    print(str(running))
     # some sort of return to start function ?
     
     # Set amount to default
