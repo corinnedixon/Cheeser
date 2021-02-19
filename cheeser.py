@@ -200,7 +200,7 @@ def runCheeser(size, cheese_time):
 def moveProgram(m, b):
     global moving
     moving = True
-    print(str(moving))
+    print("MOVE: " + str(moving))
     
     # Set direction of move
     GPIO.output(S1_DIR, GPIO.HIGH)
@@ -209,8 +209,6 @@ def moveProgram(m, b):
     move = threading.Thread(target=moveFunc, args=[m,b])
     # Start new thread
     move.start()
-    while(moving): pass
-    move.join()
     
 def moveFunc(m,b):
   global moving
@@ -242,8 +240,6 @@ def spinProgram(m,b):
     spin = threading.Thread(target=spinFunc, args=[m,b])
     # Start new thread
     spin.start()
-    while(spinning): pass
-    spin.join()
 
 def spinFunc(m,b):
   global spinning
@@ -272,8 +268,6 @@ def cheeseProgram(speed):
   
     # Start new thread
     motor.start()
-    while(cheesing): pass
-    motor.join()
     
 def cheeseFunc(speed):
   global cheesing  #create global
