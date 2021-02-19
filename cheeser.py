@@ -135,8 +135,6 @@ def sevenProgram():
     print("7")
     seven = threading.Thread(target=runCheeser, args=(7, time7))
     seven.start()
-    while(running): pass
-    seven.join()
 
 # 10 inch function
 def tenProgram():
@@ -145,8 +143,6 @@ def tenProgram():
     print("10")
     ten = threading.Thread(target=runCheeser, args=(10, time10))
     ten.start()
-    while(running): pass
-    ten.join()
 
 # 12 inch function
 def twelveProgram():
@@ -155,8 +151,6 @@ def twelveProgram():
     print("12")
     twelve = threading.Thread(target=runCheeser, args=(12, time12))
     twelve.start()
-    while(running): pass
-    twelve.join()
 
 # 14 inch function
 def fourteenProgram():
@@ -183,6 +177,7 @@ def runCheeser(size, cheese_time):
     print("RUNNING CHEESE\n")
     
     pizzaTime = time.time()
+    print(str(running))
     
     # Run cheeser programs for given time
     spinProgram(motor2_mvals[size], motor2_bvals[size])
@@ -205,6 +200,7 @@ def runCheeser(size, cheese_time):
 def moveProgram(m, b):
     global moving
     moving = True
+    print(str(moving))
     
     # Set direction of move
     GPIO.output(S1_DIR, GPIO.HIGH)
@@ -217,7 +213,7 @@ def moveProgram(m, b):
     move.join()
     
 def moveFunc(m,b):
-  global startTime, moving
+  global moving
   startTime = time.time()
   while moving:
     if moving == False:
@@ -250,7 +246,7 @@ def spinProgram(m,b):
     spin.join()
 
 def spinFunc(m,b):
-  global startTime, spinning
+  global spinning
   startTime = time.time()
   while spinning:
     if spinning == False:
