@@ -165,8 +165,6 @@ def fourteenProgram():
     print("14")
     fourteen = threading.Thread(target=runCheeser, args=(14, time14))
     fourteen.start()
-    while(running): pass
-    fourteen.join()
 
 #************************************CHEESER FUNCTIONS***************************************
 
@@ -192,10 +190,7 @@ def runCheeser(size, cheese_time):
     dc.start(dcmotorspeed)
     moveProgram(motor1_bvals[size], motor2_mvals[size])
     time.sleep(cheese_time)
-    stopMoving()
-    stopCheesing()
-    stopSpinning()
-    dc.stop()
+    stopAll()
     
     # some sort of return to start function ?
     
@@ -304,6 +299,8 @@ def stopCheesing():
   
 # Function that stops everything
 def stopAll():
+    global running
+    running = False
     stopCheesing()
     stopSpinning()
     stopMoving()
