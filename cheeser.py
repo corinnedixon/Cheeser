@@ -207,7 +207,7 @@ def moveProgram(m, b):
     GPIO.output(S1_DIR, GPIO.HIGH)
     
     # Create new thread
-    move = threading.Thread(target=[moveFunc], args=(m,b))
+    move = threading.Thread(target=moveFunc, args=[m,b])
     # Start new thread
     move.start()
     
@@ -238,7 +238,7 @@ def spinProgram(m,b):
     GPIO.output(S2_DIR, GPIO.HIGH)
 
     # Create new thread
-    spin = threading.Thread(target=[spinFunc], args=(m,b))
+    spin = threading.Thread(target=spinFunc, args=[m,b])
     # Start new thread
     spin.start()
 
@@ -263,7 +263,7 @@ def stopSpinning():
 # Functions for starting and stopping cheese
 def cheeseProgram(speed):
     # Create new threads
-    motor = threading.Thread(target=[cheeseFunc], args = (speed))
+    motor = threading.Thread(target=cheeseFunc, args = [speed])
   
     # Start new thread
     motor.start()
