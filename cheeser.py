@@ -135,6 +135,8 @@ def sevenProgram():
     print("7")
     seven = threading.Thread(target=runCheeser, args=(7, time7))
     seven.start()
+    while(running): pass
+    seven.join()
 
 # 10 inch function
 def tenProgram():
@@ -143,6 +145,8 @@ def tenProgram():
     print("10")
     ten = threading.Thread(target=runCheeser, args=(10, time10))
     ten.start()
+    while(running): pass
+    ten.join()
 
 # 12 inch function
 def twelveProgram():
@@ -151,6 +155,8 @@ def twelveProgram():
     print("12")
     twelve = threading.Thread(target=runCheeser, args=(12, time12))
     twelve.start()
+    while(running): pass
+    twelve.join()
 
 # 14 inch function
 def fourteenProgram():
@@ -159,6 +165,8 @@ def fourteenProgram():
     print("14")
     fourteen = threading.Thread(target=runCheeser, args=(14, time14))
     fourteen.start()
+    while(running): pass
+    fourteen.join()
 
 #************************************CHEESER FUNCTIONS***************************************
 
