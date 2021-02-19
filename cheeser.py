@@ -200,7 +200,6 @@ def runCheeser(size, cheese_time):
 def moveProgram(m, b):
     global moving
     moving = True
-    print("MOVE: " + str(moving))
     
     # Set direction of move
     GPIO.output(S1_DIR, GPIO.HIGH)
@@ -294,6 +293,7 @@ def stopAll():
     stopCheesing()
     stopSpinning()
     stopMoving()
+    print("STOPPPP")
 
 #**************************************CLEAN AND PRIME**************************************
 
