@@ -195,7 +195,7 @@ def moveFunc(m,b):
       break
     else:
       speed = m*(time.time()-startTime)+b
-      spin = "$STEPPER_START,MOVE,FORWARD," + speed + ",5\r\n" # Command needs edited
+      spin = "$STEPPER_START,MOVE,FORWARD," + str(speed) + ",5\r\n" # Command needs edited
       ###ser.write(spin.encode())
       print(spin)
 
@@ -224,7 +224,7 @@ def spinFunc(m,b):
       break
     else:
       speed = m*(time.time()-startTime)+b
-      spin = "$STEPPER_START,SPIN,FORWARD," + speed + ",5\r\n" # Command needs edited
+      spin = "$STEPPER_START,SPIN,FORWARD," + str(speed) + ",5\r\n" # Command needs edited
       ###ser.write(spin.encode())
       print(spin)
 
@@ -237,7 +237,7 @@ def stopSpinning():
 
 # Functions for starting and stopping cheese
 def cheeseFunc(speed):
-    cheese = "$STEPPER_START,CHEESE,FORWARD," + speed + ",0\r\n" # Command needs edited
+    cheese = "$STEPPER_START,CHEESE,FORWARD," + str(speed) + ",0\r\n" # Command needs edited
     ###ser.write(cheese.encode())
     print(cheese)
 
@@ -248,7 +248,7 @@ def stopCheesing():
   
 # Functions for starting and stopping dc motor
 def startDC(speed):
-    dc = "$DC_START,DC,FORWARD," + speed + ",0\r\n" # Command needs edited
+    dc = "$DC_START,DC,FORWARD," + str(speed) + ",0\r\n" # Command needs edited
     ###ser.write(dc.encode())
     print(dc)
 
