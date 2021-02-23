@@ -167,7 +167,7 @@ def runCheeser(size, cheese_time):
     # some sort of return to start function ?
     
     # Set amount to default
-    #setAmount(med)
+    setAmount(med)
     
     # Update diagnostics if emergency stop was not made
     if(not shutdown):
