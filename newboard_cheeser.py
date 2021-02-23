@@ -159,9 +159,7 @@ def runCheeser(size, cheese_time):
     # Run cheeser programs for given time
     spinProgram(motor2_mvals[size], motor2_bvals[size])
     cheeseFunc(motor3speeds[size])
-    dc = "$DC_START,DC,FORWARD," + dcmotorspeed[size] + ",0\r\n" # Command needs edited
-    ###ser.write(dc.encode())
-    print(dc)
+    startDC(dcmotorspeed)
     moveProgram(motor1_bvals[size], motor2_mvals[size])
     while((not shutdown) and (time.time()-pizzaTime < cheese_time)):
         pass
@@ -248,15 +246,23 @@ def stopCheesing():
   ###ser.write(stop.encode())
   print(stop)
   
+# Functions for starting and stopping dc motor
+def startDC(speed):
+    dc = "$DC_START,DC,FORWARD," + speed + ",0\r\n" # Command needs edited
+    ###ser.write(dc.encode())
+    print(dc)
+
+def stopDC():
+  stop = "$STEPPER_STOP,DC\r\n" # Command needs edited
+  ###ser.write(stop.encode())
+  print(stop)
+  
 # Function that stops everything
 def stopAll():
-    global dc
     stopCheesing()
     stopSpinning()
     stopMoving()
-    stop = "$DC_STOP,DC\r\n" # Command needs edited
-    ###ser.write(stop.encode())
-    print(stop)
+    stopDC()
 
 #**************************************CLEAN AND PRIME**************************************
 
@@ -285,11 +291,11 @@ def cleanProgram(button):
     cleanTime = time.time()
 
     # Auger thread
-    auger = threading.Thread(target=cheeseProgram, args = (clean_prime_speed))
+    auger = threading.Thread(target=cheeseFunc, args = (clean_prime_speed))
     
     # Start new thread
     auger.start()
-    dc.start(dcmotorspeed)
+    startDC(dcmotorspeed)
         
     # Run for 2 minutes
     while((not shutdown) and (time.time()-cleanTime < 120)):
@@ -325,11 +331,11 @@ def primeProgram(button):
     primeTime = time.time()
 
     # Auger thread
-    auger = threading.Thread(target=cheeseProgram, args = (clean_prime_speed))
+    auger = threading.Thread(target=cheeseFunc, args = (clean_prime_speed))
     
     # Start new thread
     auger.start()
-    dc.start(dcmotorspeed)
+    startDC(dcmotorspeed)
   
     # Run for 30 seconds
     while((not shutdown) and (time.time()-primeTime < 30)):
