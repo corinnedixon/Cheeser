@@ -184,17 +184,21 @@ def runCheeser(size, cheese_time):
     cheeseProgram(motor3speeds[size])
     dc.start(dcmotorspeed)
     moveProgram(motor1_bvals[size], motor2_mvals[size])
-    time.sleep(cheese_time)
+    while((not shutdown) and (time.time()-pizzaTime < cheese_time)):
+        pass
     stopAll()
-    print(str(running))
     # some sort of return to start function ?
     
     # Set amount to default
     #setAmount(med)
     
-    # Update diagnostics
-    pizzaTime = time.time() - pizzaTime
-    updateDiagnostics(pizzaTime)
+    # Update diagnostics if emergency stop was not made
+    if(not shutdown):
+        pizzaTime = time.time() - pizzaTime
+        updateDiagnostics(pizzaTime)
+     
+    # Cheesing is done - update running
+    running = False
 
 # Functions for moving across
 def moveProgram(m, b):
@@ -288,13 +292,11 @@ def stopCheesing():
   
 # Function that stops everything
 def stopAll():
-    global running, dc
+    global dc
     stopCheesing()
     stopSpinning()
     stopMoving()
     dc.stop()
-    running = False
-    print("STOPPPP")
 
 #**************************************CLEAN AND PRIME**************************************
 
@@ -416,6 +418,11 @@ def setAmount(amt):
         setColor("DarkOrange2")
         light["bg"] = button_color
         extra["bg"] = "DarkOrange2"
+
+# Function for stop button
+def emergencyStop():
+    global shutdown
+    shutdown = True
 
 #********************************CALIBRATION / DIAGNOSTICS**********************************
 
@@ -733,7 +740,7 @@ logo = Label(screen, image = img, bg=main_bg)
 logo.place(x=40, y=255)
 
 # Function button
-stopButton  = Button(screen, text = "STOP", font = stopFont, bg = "red2", fg = "white", command = stopAll, height = 1, width = 9)
+stopButton  = Button(screen, text = "STOP", font = stopFont, bg = "red2", fg = "white", command = emergencyStop, height = 1, width = 9)
 stopButton.place(x=220, y=235)
 
 moreButton  = Button(screen, text = "...", font = stopFont, bg = button_color, fg = main_fg, command = moreScreen, height = 1, width = 3)
